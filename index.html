@@ -1,0 +1,243 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title> Note 4 Doctor </title>
+	<script src="js/jquery-1.10.1.min.js"></script>
+	<script src="js/jquery-ui.js"></script>
+	<link rel="stylesheet" href="css/jquery-ui.css">
+	<script src="js/highcharts.js"></script>
+	<script src="js/exporting.js"></script>
+	<script type="text/javascript" src="n4d.js"></script>
+	<style>
+		#FullPane {
+			width: 1000px;
+			height: 800px;
+			margin: 0 auto;
+		}
+		
+		#TopPane {
+			height: 65px;
+			background-color: #A0A0A0;
+			border-style: solid;
+			border-width: 2px;
+			text-align: center;
+		}
+		
+		#UserPane {
+			border-style: solid;
+			border-width: 0 2px;
+			text-align: right;
+			padding: 10px;
+			font-style: oblique;
+			font-weight: bold;
+		}
+		
+		#LeftPane, #RightPane, #CustomizationPane  {
+			height: 600px;
+			border-style: solid;
+			border-top-width: 2px;
+			border-bottom-width: 2px;
+		}
+		
+		#LeftPane {
+			background-color: #D0D0D0;
+			width: 397px;
+			border-right-width: 1px;
+			border-left-width: 2px;
+			float: left;
+		}
+		
+		#RightPane {
+			background-color: #D0D0D0;
+			width: 597px;
+			border-left-width: 1px;
+			border-right-width: 2px;
+			float: left;
+		}
+
+		#CustomizationPane {
+			background-color: #D0D0D0;
+			width: 996px;
+			border-left-width: 2px;
+			border-right-width: 2px;
+		}
+				
+		#ButtonsPane {
+			background-color: #D0D0D0;
+			border-style: solid;
+			border-width: 0px 0px 2px;
+			padding: 0px 7px;
+		}
+		
+		#BottomPane {
+			width: 1000px; 
+			float:left;
+		}
+		
+		#AddEditPane form input {
+			width: 60px;
+		}
+	</style>
+</head>
+<body style = "background-color:#D0D0D0;" onload = "RevertLeftPane()">
+
+<div id = "FullPane">
+	<div id = "TopPane">
+		<h2> Lucky7's Note4Doctor (Time Stamp: April 22th) </h2>
+	</div>
+	<div id="MiddlePane">
+		<div id="UserPane"></div>
+		<div id = "LeftPane">
+			<div id = "ButtonsPane">
+				<button id = "btnAddEdit" onclick = 'AddEditForm()' style = 'width:125px'> Add / Edit </button>
+				<button id = "btnViewPrint" onclick = 'ViewPrintForm()' style = 'width:125px'> View / Print </button>
+				<button id = "btnLoadSave" onclick = 'LoadSaveForm()' style = 'width:125px'> Load / Save </button>
+			</div>
+			<div id = "AddEditPane" style = "display: none; position: relative;">
+				<div style="text-align: center;"><h3>Add/Edit Pane</h3></div>
+				<form action="javascript:void(0);" name="add" onsubmit="submitAddEdit()">
+					<div>
+						<table style="margin: 40px auto;">
+							<tr>
+							  <td><b>Date:</b></td>
+							  <td><input name="date" type="text" id="datepicker1" onchange="loadAddEditData(this.value);" style="width:75px;" readonly /></td> 
+							</tr>
+							<tr><td><br></td></tr>
+							<tr>
+							  <td><b>Heart Rate</b> <i>(bpm)</i>:</td>
+							  <td><input name="heart" type="number" min="60" max="100" required /></td>
+							</tr>
+							<tr>
+							  <td><b>Blood Pressure</b> <i>(mm Hg)</i>:</td>
+							  <td>
+								<input name="sbp" type="number"  min="110" max="180" required /> 
+								/ 
+								<input name="dbp" type="number"  min="70" max="110" required />
+							  </td>
+							</tr>
+							<tr>
+							  <td><b>Blood Sugar Level</b> <i>(mg/dL)</i>:</td>
+							  <td><input name="sugar" type="number" min="50" max="500" required /></td>
+							</tr>
+							<tr>
+							  <td><b>Total Cholesterol Level</b> <i>(mg/dL)</i>:</td>
+							  <td><input name="cholesterol" type="number" min="110" max="390" required /></td>
+							</tr>
+							<tr><td><br><br></td></tr>
+							<tr>
+							  <td><b>Hours Slept</b> <i>(hrs)</i>:</td>
+							  <td><input name="sleep" type="number" min="0" max="24" required /></td>
+							</tr>
+							<tr>
+							  <td><b>Cardio Workouts</b> <i>(hrs)</i>:</td>
+							  <td><input name="cardio" type="number" min="0" max="24" required /></td>
+							</tr>
+							<tr>
+							  <td><b>Strength Workouts</b> <i>(hrs)</i>:</td>
+							  <td><input name="strength" type="number" min="0" max="24" required /></td>
+							</tr>
+						</table>
+					</div>
+					<div style = "margin: 40px 0 0 120px;"><input type="submit"></div>
+				</form>
+				<button onclick = "RevertLeftPane('add')" style="bottom: 0; left: 200px; position: absolute;"> Cancel </button>
+			</div>
+			<div id = "ViewPrintPane" style = "display: none; position: relative;">
+				<div style="text-align: center;"><h3>View/Print Pane</h3></div>
+				<form action="javascript:void(0);" name="add" onsubmit="generateReport();">
+					<div>
+						<table style="margin: 40px auto;">
+							<tr>
+							  <td><b>Start Date:</b></td>
+							  <td><input name="startdate" type="text" id="datepicker2" style="width:75px;" readonly /></td>
+							</tr>
+							<tr>
+							  <td><b>End Date:</b></td>
+							  <td><input name="enddate" type="text" id="datepicker3" style="width:75px;" readonly /></td> 
+							</tr>
+						</table>
+					</div>
+					<div style = "margin: 40px 0 0 140px;"><input type="submit" value="View"></div>
+				</form>
+				<button onclick = "RevertLeftPane('view')" style="bottom: 0; left: 200px; position: absolute;"> Back </button>
+			</div>
+			<div id = "LoadSavePane" style = "display: none; position: relative;">
+				<div style="text-align: center;"><h3>Load/Save Pane</h3></div>
+				<form action="export.php" name="backup">
+					<div style="text-align: center;"> Download as .csv file !!!</div>
+					<div style = "margin: 40px 0 0 130px;"><input type="submit" value="Download" style="width: 75px;"></div>
+				</form>
+				<button onclick = "RevertLeftPane('load');" style="bottom: 0; left: 215px; position: absolute;"> Back </button>
+			</div>
+			<div id = "HealthMeterPane" style = "height: 287px; width: 397px; overflow: auto; border-style: solid; border-width: 0px 0px 2px;">
+				<div style="text-align: center;"><h3>Health Meter</h3></div>
+			</div>
+			<div id = "ActivityPane" style = "height: 287px; width: 397px; overflow: auto;">
+				<div style="text-align: center;"><h3>Activities Meter</h3></div>
+			</div>
+		</div>
+		<div id = "RightPane">
+			<div id="container1" style="height: 290px; margin: 0 auto; padding:5px"></div>
+			<div id="container2" style="height: 290px; margin: 0 auto; padding:5px"></div>
+			
+		</div>
+				<div id = "CustomizationPane" style="text-align: center;">
+			<p> Customization using Middle Pane </p>
+			<select id = "WhichPane">
+				<option value = "ActivityPane"> Activities Meter </option>
+				<option value = "AddEditPane"> Add / Edit </option>
+				<option value = "CustomizationPane"> Customization </option>
+				<option value = "container"> Graph </option>
+				<option value = "HealthMeterPane"> Health Meter </option>
+				<option value = "LoadSavePane"> Load / Save </option>
+				<option value = "TopPane"> Title </option>
+				<option value = "ViewPrintPane"> View / Print </option>
+			</select>
+			<select id = "WhichColor">
+				<option value = "#66CCFF"> Blue </option>
+				<option value = "#A0A0A0"> Dark Gray </option>
+				<option value = "#00CC99"> Green </option>
+				<option value = "#D0D0D0"> Light Gray </option>
+				<option value = "#FF9966"> Orange </option>
+				<option value = "#FF99CC"> Pink </option>
+				<option value = "#6666CC"> Purple </option>
+				<option value = "#A00000"> Red </option>
+			</select>
+			<select id = "WhichFont">
+				<option value = "Arial"> Arial </option>
+				<option value = "Comic Sans MS"> Comic Sans MS </option>
+				<option value = "Courier New"> Courier New </option>
+				<option value = "Impact"> Impact </option>
+				<option value = "Lucida Console"> Lucida Console </option>
+				<option value = "Tahoma"> Tahoma </option>
+				<option value = "Verdana"> Verdana </option>
+			</select>
+			<select id = "WhichSize">
+				<option value = "8px"> 8pt </option>
+				<option value = "9px"> 9pt </option>
+				<option value = "10px"> 10pt </option>
+				<option value = "11px"> 11pt </option>
+				<option value = "12px"> 12pt </option>
+				<option value = "14px"> 14pt </option>
+				<option value = "16px"> 16pt </option>
+				<option value = "18px"> 18pt </option>
+				<option value = "20px"> 20pt </option>
+				<option value = "22px"> 22pt </option>
+				<option value = "24px"> 24pt </option>
+			</select>
+			<button onclick = "ChangeColorFont()" style = "width:130px"> Change </button>
+			<button onclick = "RevertLeftPane('customize')"> Cancel </button>
+		</div>
+	</div>
+	<div id="BottomPane">
+		<a href="http://www.public.asu.edu/~knguye12/">
+			<button type="button" style="position:relative; left:420px"> Return to Home Page </button>
+		</a>
+		<img src="http://www.public.asu.edu/~knguye12/Gear.png" onclick="Cog()" style="position: relative; top: 10px; left: 795px; height: 35px; width: auto;" />
+	</div>
+	<div id="HiddenReport" style="display:none;"></div>
+</div>
+
+	
+</body>
+<html>
